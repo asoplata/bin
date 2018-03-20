@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# This script is for copying ONLY the filetypes in the
+# "filetypes-pics-models-list.txt" file from your personal "projectnb"
+# directory to a folder called "pics-models-only" in your personal "project"
+# directory on the SCC cluster.
+
+export DATAB=/project/crc-nak/<YOUR_USERNAME_HERE>
+export DATANB=/projectnb/crc-nak/<YOUR_USERNAME_HERE>
+
+# The name of your main data folder in the above personal project and projectnb
+# folders:
+export PROJDATA=<YOUR_DATA_DIRECTORY_HERE>
+
+rsync --human-readable --verbose --archive --include '*/' \
+    --include-from=$HOME/bin/filetypes-pics-models-list.txt \
+    --exclude '*' $DATANB/$PROJDATA/* $DATAB/$PROJDATA/pics-models-only

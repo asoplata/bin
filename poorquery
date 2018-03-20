@@ -1,0 +1,137 @@
+#!/bin/sh
+# # poorquery
+# Matches regex-identified png-files anywhere on a filesystem and outputs an HTML file displaying them
+# 
+# ## NAME:
+# poorquery.sh
+# 
+# ## SIGNATURE:
+# `poorquery.sh <bash path, including globs/wildcards, IN SINGLE/DOUBLE QUOTES>`
+# 
+# ## DEPENDENCIES:
+# - [Pandoc](http://pandoc.org/) (This is rather large, around >700MB, as you must
+#   install the GHC Haskell compiler, unless you install a simple binary version.
+#   If you get to know/use Pandoc, though, you will NOT regret it, it's awesome!)
+# - a Unix/Linux OS (maybe?), or Cygwin on Windows (untested)
+# - sed (Only needs install on Windows. OS X version untested)
+# - this script makes, and then removes, a bunch of temp files like `temp1.txt`
+#   and `temp6.md`, so if you have files called that then this will delete them.
+# 
+# ## INSTALL:
+# 0. (Install any dependencies listed above.)
+# 1. Add this file to your `$PATH` environment variable. This is most easily
+# done by editing your `.bashrc` in your home directory and adding this line to
+# the end:
+# 
+#         export PATH="$PATH:/<path>/<to>/<your>/<bin>/<git>/<repo>"
+# 
+# ## DESCRIPTION:
+# This tiny little bash script takes a single, bash-wildcard/regex-enabled path,
+# finds all `.png` files in every subdirectory that matches, and then builds an
+# HTML file (named `poorquery_output.html` in the working directory) to show the
+# filename of all matches alongside the ACTUAL pictures. I.e., when you open the
+# HTML file in your browser, you'll see both the filename and the corresponding
+# picture.
+# 
+# The pictures are not stored in the HTML file but are rather referenced directly
+# on your hard drive from them, so the HTML files are small. This way, if you have
+# very many picture files that are named specifically enough for you to treat
+# either their directories or filenames as bash-style regular expressions, you can
+# then visualize a selected subset of them quickly via a single regex. Because the
+# really optimal way would be serious SQL-querying a full on database of all your
+# picture/simulation results, for the moment I'm calling this Poor Query, since
+# this is essentially a low tech way to quickly visualize data that is distributed
+# in regex-filename capable filesystem hierarchies rather than databases.
+# 
+# ## EXAMPLES:
+# Say you have some simulations' result pictures you want to visualize, which
+# are, of course, organized in a complicated naming scheme, like
+# 
+# - sciencing
+#     - data_20150526
+#     - data_20150527
+#         - p001d001q022c001
+#         - p001d001q023c001
+#         - p001d001q023c002
+#             - raw_v
+#                 - p001d001q023c002__T000.png
+#                 - p001d001q023c002__T001.png
+#                 - p001d001q023c002__T002.png
+#                 - p001d001q023c002__T003.png
+#             - raw_spikes
+#                 - p001d001q023c002__T000.png
+#                 - p001d001q023c002__T001.png
+#             - raw_whatevs
+#                 - p001d001q023c002_gH0pt001_gEsyn0pt02_T000.png
+#                 - p001d001q023c002_gH0pt001_gEsyn0pt04_T001.png
+#                 - p001d001q023c002_gH0pt002_gEsyn0pt02_T002.png
+#                 - p001d001q023c002_gH0pt002_gEsyn0pt04_T003.png
+# 
+# Let's assume your current working directory is the `sciencing` directory.
+# You could easily visualize all the pictures from 2015-05-27 with just:
+# 
+#         poorquery.sh 'data_20150527'
+# 
+# Or if you wanted all the `raw_v` figures for just the '...q023...'
+# simulations, and for all of May: 
+# 
+#         poorquery.sh 'data_201505*/*q023*/raw_v/*'
+# 
+# The best example there is is how I actually use it: when the individual figure
+# filenames themselves have some parameter you're varying over, like for an
+# N-dimensional batch of parameter sweeping simulations, you often want to hold
+# one parameter fixed and vary the others. Say I want to see how changing the gH
+# (in `raw_whatevs`) changes the outcome of the simulations, while holding gEsyn
+# constant -- I would just run:
+# 
+#         poorquery.sh '*/*q023*/raw_whatevs/*gH*gEsyn0pt02*'
+# 
+# Or, equivalently in this case:
+# 
+#         poorquery.sh '*/*q023*/raw_whatevs/*gEsyn0pt02*'
+# 
+# Thus, you have "bash-style regular expression"-level control over viewing the
+# hoowever-nested pictures you have...which is a lot of power!
+# 
+# ## TODO:
+# - Stop using temp files, and instead use bash variables (which are harder in
+#   terms of handling newlines, it seems...)
+
+RESOLUTIONX='600px'
+RESOLUTIONY='400px'
+# If you want to change the picture extension used, change this:
+EXTENSION='png'
+# EXTENSION='jpg'
+
+# If number of arguments is 2
+if  [ $# -eq 2 ]
+then
+EXTENSION=$2
+fi
+
+QUERY=$1
+PATH_QUERY="${PWD}/$QUERY"
+
+find $PATH_QUERY -name "*.${EXTENSION}" -printf "%f\n" > temp1.txt
+find $PATH_QUERY -name "*.${EXTENSION}" > temp2.txt
+
+echo 'Matches:'
+cat temp2.txt
+
+sed -e 's/^/<img src="/g' temp2.txt > temp3.txt
+sed -e 's/$/" width="'${RESOLUTIONX}'" height="'${RESOLUTIONY}'" \/>/g' temp3.txt > temp4.txt
+
+paste temp1.txt temp4.txt -d " " > temp5.md
+
+sed -e 's/$/\n/g' temp5.md > temp6.md
+
+pandoc -s -o poorquery_output.html temp6.md
+
+if [ -f temp1.txt ]; then rm temp1.txt; fi
+if [ -f temp2.txt ]; then rm temp2.txt; fi
+if [ -f temp3.txt ]; then rm temp3.txt; fi
+if [ -f temp4.txt ]; then rm temp4.txt; fi
+if [ -f temp5.md  ]; then rm temp5.md ; fi
+if [ -f temp6.md  ]; then rm temp6.md ; fi
+
+echo "Now you can open 'poorquery_output.html' to see the matches."

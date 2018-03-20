@@ -1,0 +1,5 @@
+*_model-specification.mat
+*.eps
+*.jpg
+*.m
+*.png

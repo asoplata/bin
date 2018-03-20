@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# This is a nifty small script that simply replaces all instances of the first
+# string with the second string inside every file in the current working
+# directory of "below" (recursively searching all subfolders). It also warns
+# you how many times it will accomplish this if run, and gives you a chance to
+# cancel before actually running the replacement.
+
+# from https://stackoverflow.com/a/29779745
+indent() { sed 's/^/  /'; }
+
+echo $'--> You want to replace ALL instances, recursively, of string'
+echo $'"'$1'" with string "'$2'". This will affect this many instances:'
+grep -r "$1" * | wc -l | indent
+echo $'Across this many files:'
+grep -r -l "$1" * | wc -l | indent
+echo $'Proceed?'
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes )
+            grep -r -l "$1" * | xargs sed -i "s/$1/$2/g"
+        break ;;
+        No ) break ;;
+    esac
+done

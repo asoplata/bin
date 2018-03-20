@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# This is just a simple alias for using grep to find all instances of a search
+# string in all recursive files and folders of the current working directory.
+
+SEARCHSTRING=$1
+
+grep --color=auto --exclude=tags -n $SEARCHSTRING * -r

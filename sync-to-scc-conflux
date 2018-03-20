@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# This simple script copies all files inside a certain local folder
+# "scc-conflux" into a the SCC copy of the same folder. Intended for use
+# alongside `sync-from-scc-conflux` for easy mirroring of files. Note that this
+# does not delete any files, but can be made to do so.
+
+rsync --human-readable --verbose --archive --compress \
+    -e ssh $HOME/scc-conflux <YOUR_USERNAME_HERE>@scc1.bu.edu:~/

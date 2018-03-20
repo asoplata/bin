@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# This script is for copying ONLY the filetypes in the
+# "filetypes-pics-models-list.txt" file FROM the "pics-models-only" folder in
+# your personal "project" directory on the SCC TO a local copy on your local
+# computer. This is intended to be used alongside
+# `cluster-bin/copy-pics-models`.
+
+export DATAB=/project/crc-nak/<YOUR_USERNAME_HERE>
+
+# The name of your main data folder in the above personal project and projectnb
+# folders:
+export PROJDATA=<YOUR_DATA_DIRECTORY_HERE>
+
+rsync --human-readable --verbose --archive --compress \
+    --include '*/' \
+    --include-from=$HOME/bin/filetypes-pics-models-list.txt \
+    --exclude '*' -e ssh \
+    <YOUR_USERNAME_HERE>@scc1.bu.edu:$DATAB/$PROJDATA/pics-models-only/* \
+    ~/$PROJDATA/pics-models-only
