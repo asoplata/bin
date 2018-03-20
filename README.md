@@ -36,7 +36,7 @@ Simple bash scripts that are useful, especially on the SCC cluster
 - `sync-to-scc-conflux`: Syncs everything FROM a local version of the folder
   `scc-conflux` TO a folder on the SCC of the same name, but does not delete
   any files (can be made to do so).
-- `cluster-bin/copy-pics-models`: Copies ONLY the filetypes in
+- `sync-pics-models-only-to-local`: Copies ONLY the filetypes in
   `filetypes-pics-models-list.txt` FROM the `pics-models-only` folder in your
   personal "project" folder on the SCC TO a copy of the folder on your local
   machine.
