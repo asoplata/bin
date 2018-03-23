@@ -18,7 +18,7 @@ echo $'Proceed?'
 select yn in "Yes" "No"; do
     case $yn in
         Yes )
-            grep -r -l "$1" * | xargs sed -i "s/$1/$2/g"
+            grep --recursive --files-with-matches --exclude-dir=.git "$1" * | xargs sed -i "s/$1/$2/g"
         break ;;
         No ) break ;;
     esac
