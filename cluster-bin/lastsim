@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Grab the most recently used/modified `sim_job` file in that folder
+export most_recent_sim=$(ls -t ~/batchdirs/*/pbsout/* | head -n1)
+
+# Strip the extension from the filename,
+# from https://stackoverflow.com/a/12152669
+export raw_sim=$(echo $most_recent_sim | cut -f 1 -d '.')
+
+out_extension='.out'
+out_file=$raw_sim$out_extension
+
+echo "----->"
+echo "-----> Last 10 lines of most recent sim_job out file:"
+echo "  $out_file"
+echo "----->"
+tail $out_file
+
+error_extension='.err'
+error_file=$raw_sim$error_extension
+
+if [ -s $error_file ]
+then
+    echo "----->"
+    echo "-----> OH GEEZ, there's been an error in the most recent simjob!"
+    echo "----->"
+else
+    echo "----->"
+    echo "-----> No error seen so far in the sim_job error file."
+    echo "----->"
+fi

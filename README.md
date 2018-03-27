@@ -24,6 +24,12 @@ Simple bash scripts that are useful, especially on the SCC cluster
   the second string argument in ALL files in ALL subfolders from the current
   working directory. Also gives you a warning listing the number of changes
   before it runs!
+- `cluster-bin/lastsim`: Prints the last 10 lines of the **most recent** 
+  `sim_job<N>.out` file in all subfolders of your `batchdirs` folder to 
+  terminal, so you can see what the latest status is. This also indicates 
+  whether the associated `sim_job<N>.err` standard error file is empty or not. 
+  Note that this has not been tested when there are very many `sim_job<N>.out` 
+  files.
 
 - `gr`: A trivial alias for using grep to find all instances of a string in all
   files in all subfolders from the current working directory.
