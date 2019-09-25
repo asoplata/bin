@@ -93,7 +93,7 @@
 # Thus, you have "bash-style regular expression"-level control over viewing the
 # hoowever-nested pictures you have...which is a lot of power!
 # 
-# ## TODO:
+# ## todo:
 # - Stop using temp files, and instead use bash variables (which are harder in
 #   terms of handling newlines, it seems...)
 
